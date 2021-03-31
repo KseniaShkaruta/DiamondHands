@@ -39,6 +39,7 @@ docker run -d \
 
 # Using the evironment
 * Go to `http://localhost:3423/` to go to the Rstudio IDE. It can be used to access the OS via terminal too
+    - the username is `rstudio` and password is what you set above `mypwd` in the example command
 * Go to `http://localhost:1234/` to go to the shiny server - there's some examples right now such as: http://localhost:1234/01_hello/
     - Some included sample apps: `01_hello,02_text,03_reactivity,04_mpg,05_sliders,06_tabsets,07_widgets,08_html,09_upload,10_download,11_timer `
 
