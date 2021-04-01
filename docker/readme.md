@@ -16,7 +16,7 @@ It can be used to easily share an environment that's used for dashboards/data vi
 
 ## Build locally from dockerfile
 
-This builds the image from the dockerfile
+This builds the image from the dockerfile. Run this from the directory where the dockerfile is  (or change `.` to `./path/to/Dockerfile`)
 * `docker build -t name-for-your-image .`
 
 ## Install a published image
