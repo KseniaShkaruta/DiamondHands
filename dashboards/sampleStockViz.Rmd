@@ -31,7 +31,7 @@ Inputs {.sidebar}
       selected = 12)
 ```
 
-Row {.tabset}
+Row {.tabset .tabset-fade}
 -------------------------------------
 
 ### Chart
@@ -66,8 +66,8 @@ renderHighchart({
 })
 
 
-
-#line chart
+# https://jkunst.com/highcharter/articles/stock.html
+# line chart if you had a standard (non reactive) df
 # highchart() %>%
 #   hc_title(text = "SNDL",
 #          margin = 20, align = "center") %>%
