@@ -26,21 +26,25 @@ This builds the image from the dockerfile. Run this from the directory where the
 Then you can run the image
 ```
 docker run -d \
-> -p 1234:3838 \
-> -p 3423:8787 \
+> -p 3333:3838 \
+> -p 4444:8787 \
+> -v ${PWD}/dashboards:/srv/shiny-server/apps \
 > -e PASSWORD=mypwd
 > name-for-your-image
 ```
 * the output will give you a docker containerid. Or use `docker ps` to see running contianers
     - you can go to the shell of the running container by running `docker exec -it <<<CONATINERID>>> bash`
-* the ports can be changed, 1234 will have the shiny server - http://localhost:3423/
-* 3423 will have the rstudio server (IDE)
+* the ports can be changed, 3333 will have the shiny server - http://localhost:4444/
+* 4444 will have the rstudio server (IDE)
 
 
 # Using the evironment
-* Go to `http://localhost:3423/` to go to the Rstudio IDE. It can be used to access the OS via terminal too
+* Go to `http://localhost:4444/` to go to the Rstudio IDE. It can be used to access the OS via terminal too
     - the username is `rstudio` and password is what you set above `mypwd` in the example command
-* Go to `http://localhost:1234/` to go to the shiny server - there's some examples right now such as: http://localhost:1234/01_hello/
+* Go to `http://localhost:3333/` to go to the shiny server - there's some examples right now such as: http://localhost:3333/01_hello/
     - Some included sample apps: `01_hello,02_text,03_reactivity,04_mpg,05_sliders,06_tabsets,07_widgets,08_html,09_upload,10_download,11_timer `
 
 
+# Viewing Dashboards
+* dashboards are stored in the `dashboards` directory which is mounted to the `apps` directory in the shiny server
+* `http://localhost:3333/apps/dashboardname`

@@ -1,0 +1,90 @@
+---
+title: "Some Sample Stock Vizs"
+output: 
+  flexdashboard::flex_dashboard:
+runtime: shiny
+---
+
+
+```{r setup}
+library(magrittr)
+library(quantmod)
+library(shiny)
+library(highcharter)
+library(tidyverse)
+library(manipulateWidget)
+
+TICKERS = c('AMZN','GME','AAPL')
+HISTORICAL_PERIODS = c(3,6,12)
+
+```
+
+Inputs {.sidebar}
+-----------------------------------------------------------------------
+
+```{r}
+  selectInput("ticker_selection", label = h4("Select Stock Ticker"), 
+    choices = TICKERS, 
+    selected = "GME")
+  selectInput("months_sel", label = h4("How many months of data?"), 
+      choices = HISTORICAL_PERIODS, 
+      selected = 12)
+```
+
+Row {.tabset}
+-------------------------------------
+
+### Chart
+
+```{r}
+
+# use observeEvent() or reactive() if you're going to access something that is in a reactive context
+# observeEvent allows code to run, doesn't need to return
+# reactive will need to have a variable at the end that is assigned to something
+
+# respond to selection
+stock_xts = reactive ({
+  getSymbols(as.character(input$ticker_selection), 
+             from = as.character(Sys.Date()-(as.integer(input$months_sel)*30)),
+             to = as.character(Sys.Date()),
+             env = NULL) # env null will assign to 
+})
+
+# create Df
+stock_df = reactive({
+  # returns the stock data as XTS object...could use chart_Series(og_xts) for a plot
+  
+  df = fortify.zoo(stock_xts())
+  df
+})
+
+renderHighchart({
+  hchart(stock_xts()) %>%
+  hc_title(text = paste(as.character(input$ticker_selection), "Prices"),
+         margin = 20, align = "center")
+  
+})
+
+
+
+#line chart
+# highchart() %>%
+#   hc_title(text = "SNDL",
+#          margin = 20, align = "center") %>%
+#   hc_xAxis(categories = df$Index, title=list(text = "Date")) %>%
+#   hc_yAxis(title = list(text = "Adjusted Price") ) %>%
+#   hc_add_series(name = "SNDL Adjusted Price", data = df$SNDL.Adjusted)
+
+
+```
+
+
+
+### Table
+```{r}
+
+renderTable({
+  stock_df() %>%
+    dplyr::mutate(Index = format(.data$Index,'%Y-%m-%d'))
+  })
+```

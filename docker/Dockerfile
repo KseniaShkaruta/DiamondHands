@@ -20,4 +20,4 @@ RUN apt-get update && apt-get install -y \
 RUN /rocker_scripts/install_shiny_server.sh
 
 # install tidyverse
-RUN install2.r tidyverse highcharter flexdashboard
+RUN install2.r tidyverse highcharter flexdashboard quantmod manipulateWidget
