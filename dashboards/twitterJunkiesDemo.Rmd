@@ -1,7 +1,8 @@
 ---
-title: "Some Sample Stock Vizs"
+title: "CSE6242 Spring 2021 Team 38"
 output: 
   flexdashboard::flex_dashboard:
+    orientation: rows
 runtime: shiny
 ---
 
@@ -13,14 +14,45 @@ library(shiny)
 library(highcharter)
 library(tidyverse)
 library(manipulateWidget)
+library(flexdashboard)
+library(stringr)
+library(RColorBrewer)
+library(data.table)
 
+#global vars
 TICKERS = c('AMZN','BB','NAKD','GME','KOSS','AMC','^GSPC')
 HISTORICAL_PERIODS = c(3,6,12)
+
+# sentiment/reddit data
+st_data <- read_csv("/srv/shiny-server/apps/data/posts_with_scores_and_ticker.csv", 
+              col_types = cols(timestamp = col_datetime(format = "%Y-%m-%d, %H:%M:%S"))) %>%
+  dplyr::mutate(dt = as.Date(timestamp)) %>%
+  dplyr::mutate(stk="") %>%
+  dplyr::mutate(stk = case_when(
+    AMC==TRUE ~ paste(stk,"AMC"),
+    TRUE ~ stk
+  )) %>%
+  dplyr::mutate(stk = case_when(
+    BB==TRUE ~ paste(stk,"BB"),
+    TRUE ~stk
+  ))%>%
+  dplyr::mutate(stk = case_when(
+    NAKD==TRUE ~ paste(stk,"NAKD"),
+    TRUE ~ stk
+  )) %>%
+  dplyr::mutate(stk = case_when(
+    GME==TRUE ~ paste(stk,"GME"),
+    TRUE ~stk
+  ))%>%
+  dplyr::mutate(stk = case_when(
+    KOSS==TRUE ~ paste(stk,"KOSS"),
+    TRUE ~stk
+  ))
 
 ```
 
 Inputs {.sidebar}
------------------------------------------------------------------------
+=====================================
 
 ```{r}
   selectInput("ticker_selection", label = h4("Select Stock Ticker"), 
@@ -31,10 +63,97 @@ Inputs {.sidebar}
       selected = 12)
 ```
 
+
+
+
+
+Summary
+=====================================
+
+### **`r renderText({as.character(overall_summary())})`**
+
+#### Date Range: **August 2020 - March 2021**
+
 Row
 -------------------------------------
 
-### Stock Actuals
+
+
+```{r}
+overall_summary = reactive ({
+  summ=""
+  filtered=st_data
+  if (input$ticker_selection != "^GSPC") {
+    filtered = st_data %>% dplyr::filter(stringr::str_detect(stk,input$ticker_selection))
+    summ = paste(
+      as.character(nrow(filtered)),
+      "Total Mentions of",
+      input$ticker_selection,
+      "on r/WallStreetBets"
+    )
+  } else {
+    summ = paste(
+      as.character(nrow(filtered)),
+      "Records of overall activity on r/WallStreetBets. Used as a SP500 proxy"
+    )
+  }
+  summ
+  
+})
+
+#calculate summary stats on reload
+st_selection = reactive ({
+  #filter for current selection
+  filtered=st_data
+  if (input$ticker_selection != "^GSPC") {
+    filtered = st_data %>% dplyr::filter(stringr::str_detect(stk,input$ticker_selection))
+  } 
+  filtered
+  
+})
+
+
+```
+
+### Positive 
+
+```{r}
+flexdashboard::renderValueBox({
+  curr_sent = table(st_selection()$sentiment)
+  valueBox(paste(as.character(round(curr_sent['pos']/sum(curr_sent)*100,1)),"%",sep=""), 
+         color = "success")
+})
+```
+
+### Neutal
+
+```{r}
+flexdashboard::renderValueBox({
+  curr_sent = table(st_selection()$sentiment)
+  valueBox(paste(as.character(round(curr_sent['neutral']/sum(curr_sent)*100,1)),"%",sep=""), 
+         color = "lightblue")
+})
+```
+
+### Negative
+
+```{r}
+
+flexdashboard::renderValueBox({
+  
+  curr_sent = table(st_selection()$sentiment)
+  valueBox(paste(as.character(round(curr_sent['neg']/sum(curr_sent)*100,1)),"%",sep=""), 
+         color = "lightcoral")
+})
+
+```
+
+
+
+Row
+-------------------------------------
+
+### Stock Performance
 
 ```{r}
 
@@ -45,8 +164,8 @@ Row
 # respond to selection
 stock_xts = reactive ({
   getSymbols(as.character(input$ticker_selection), 
-             from = as.character(Sys.Date()-(as.integer(input$months_sel)*30)),
-             to = as.character(Sys.Date()),
+             from = "2020-08-14",
+             to = "2021-03-17",
              env = NULL) # env null will assign to 
 })
 
@@ -59,9 +178,15 @@ stock_df = reactive({
 })
 
 renderHighchart({
+  title=""
+  if(input$ticker_selection=="^GSPC"){
+    title = "SP500 (^GSPC)"
+  } else {
+    title = as.character(input$ticker_selection)
+  }
   hchart(stock_xts()) %>%
-  hc_title(text = paste(as.character(input$ticker_selection), "Prices"),
-         margin = 20, align = "center")
+  hc_title(text = paste(title, "Performance (Yahoo Finance via Quantmod)"),
+           margin = 20, align = "center")
   
 })
 
@@ -80,52 +205,96 @@ renderHighchart({
 
 
 
-### Table
+
+Correlation Explorer
+=====================================
+
+
 ```{r}
 
-renderTable({
-  stock_df() %>%
-    dplyr::mutate(Index = format(.data$Index,'%Y-%m-%d'))
-  })
+inputPanel(
+  selectInput("corr_stock_var", label = "Stock Variable:",
+              choices = c("AdjustedPrice","OverallVolume"), selected = "OverallVolume"),
+  
+  selectInput("corr_sent_var", label = "Sentiment Variable:",
+              choices = c("CompundScore","TotalMentions"), selected = "CompoundScore")
+)
+
+renderHighchart({
+  
+  
+  sent_data=st_selection()
+  if(input$corr_sent_var=='TotalMentions'){
+    sent_data = st_selection() %>% dplyr::select(dt) %>% dplyr::mutate(ct=1) %>%
+    group_by(dt) %>% 
+    summarise(sum(ct,na.rm=TRUE)) %>%
+    rename(c("CORR_ONE"="sum(ct, na.rm = TRUE)"))
+  } else {
+    sent_data = st_selection() %>% dplyr::select(dt,compound_score) %>%
+    group_by(dt) %>% 
+    summarise(mean(compound_score,na.rm=TRUE)) %>%
+    rename(c("CORR_ONE"="mean(compound_score, na.rm = TRUE)"))
+  }
+  
+  fin_data = stock_df()
+  
+  if (input$corr_stock_var=='AdjustedPrice'){
+    fin_data = fin_data %>% dplyr::select(Index,ends_with("Adjusted"))
+    colnames(fin_data) =c("Index","CORR_TWO") 
+  } else {
+  
+    fin_data = fin_data %>% dplyr::select(Index,ends_with("Volume"))
+    colnames(fin_data) =c("Index","CORR_TWO") 
+  }
+  
+  corr_df = sent_data %>% dplyr::inner_join(fin_data, by=c("dt"="Index"))
+  
+  
+  highchart() %>%
+    hc_yAxis_multiples(
+    list(min=0, title=list(text=input$corr_stock_var)),
+    list(opposite = TRUE, title=list(text=input$corr_sent_var) )
+  ) %>%
+  hc_title(text = paste(input$ticker_selection,input$corr_stock_var,"and WSB setiment",input$corr_sent_var,"Correlation"),
+         margin = 20, align = "center")  %>%
+  hc_xAxis(categories = corr_df$dt, title=list(text = "Week Ending")) %>%
+  #hc_yAxis(  list(title = list(text = c("Contacts") ) , min=0 ), list(title = list(text = c("awdwadwad") ) , min=0) ) %>%
+  hc_add_series(name = input$corr_stock_var, data = corr_df$CORR_ONE, yAxis=0) %>%
+  hc_add_series(name = input$corr_sent_var, data = corr_df$CORR_TWO,  yAxis = 1) %>%
+  hc_tooltip(shared=TRUE) %>%
+  hc_colors(  brewer.pal(2, "Dark2") )
+
+
+
+  
+})
 ```
 
 
-Row
+
+Anecdotes
+=====================================
+  
+  
+  
+Column {.tabset}
 -------------------------------------
 
 
-### Chart Two
+### Table
 
 ```{r}
+inputPanel(
+  selectInput("sentiment_sel_explore", label = "Sentiment",
+              choices = c("Positive" = "pos",
+                  "Negative" = "neg",
+                  "Neutral" = "neutral"))
+)
 
-
-renderHighchart({
-  hchart(stock_xts()) %>%
-  hc_title(text = paste(as.character(input$ticker_selection), "Prices"),
-         margin = 20, align = "center")
-  
-})
-
-
-# https://jkunst.com/highcharter/articles/stock.html
-# line chart if you had a standard (non reactive) df
-# highchart() %>%
-#   hc_title(text = "SNDL",
-#          margin = 20, align = "center") %>%
-#   hc_xAxis(categories = df$Index, title=list(text = "Date")) %>%
-#   hc_yAxis(title = list(text = "Adjusted Price") ) %>%
-#   hc_add_series(name = "SNDL Adjusted Price", data = df$SNDL.Adjusted)
-
-
+renderDataTable({
+  st_selection() %>% dplyr::filter(sentiment==input$sentiment_sel_explore) %>% dplyr::select(dt,text,compound_score,stk) 
+}, options = list(scrollY='75vh'))
 ```
 
 
 
-### Table Two
-```{r}
-
-renderTable({
-  stock_df() %>%
-    dplyr::mutate(Index = format(.data$Index,'%Y-%m-%d'))
-  })
-```

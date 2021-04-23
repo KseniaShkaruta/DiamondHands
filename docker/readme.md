@@ -48,4 +48,4 @@ name-for-your-image
 
 # Viewing Dashboards
 * dashboards are stored in the `dashboards` directory which is mounted to the `apps` directory in the shiny server
-* `http://localhost:3333/apps/dashboardname`
+* `http://localhost:3333/apps/name.Rmd`
