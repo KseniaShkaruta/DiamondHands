@@ -18,6 +18,7 @@ It can be used to easily share an environment that's used for dashboards/data vi
 
 This builds the image from the dockerfile. Run this from the directory where the dockerfile is  (or change `.` to `./path/to/Dockerfile`)
 * `docker build -t name-for-your-image .`
+** You may need to authenticate if you get a rate limit error - https://www.docker.com/increase-rate-limits
 
 ## Install a published image
 * **TODO**
@@ -26,11 +27,11 @@ This builds the image from the dockerfile. Run this from the directory where the
 Then you can run the image
 ```
 docker run -d \
-> -p 3333:3838 \
-> -p 4444:8787 \
-> -v ${PWD}/dashboards:/srv/shiny-server/apps \
-> -e PASSWORD=mypwd
-> name-for-your-image
+-p 3333:3838 \
+-p 4444:8787 \
+-v ${PWD}/dashboards:/srv/shiny-server/apps \
+-e PASSWORD=mypwd
+name-for-your-image
 ```
 * the output will give you a docker containerid. Or use `docker ps` to see running contianers
     - you can go to the shell of the running container by running `docker exec -it <<<CONATINERID>>> bash`
