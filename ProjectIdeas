@@ -1,9 +1,0 @@
-Analyze and visual the impact of COVID to people's emotions using Tweeter data (tweet sentiment analysis)
-Analyze and visual the impact of major events to people sentiment using Tweeter data (e.g. election, Trump ban from Twitter, 2008 market crash etc)
-Analyze and visual the impact of major/certain events to Twitter usage patterns (more/less tweets, longer/shorter) 
-Depression, anxiety, suicide in Twitter (detect patterns - what factors may have influnece on Tweets to be more depressive- # of followers/following, hour/day of the tweet, # of comments, #rt)
-Bullying/aggresive speech in Twitter (detect patterns - what factors may have influnce on Tweets to be more aggresive - # of followers/following, hour/day of the tweet, # of comments, #rt)
-Twitter relationship graph
-Emoji usage patterns
-Most popular topics on Twitter (maybe historical visulization - e.g. how top n topics changed over last n years and why?)
-Bot detection
