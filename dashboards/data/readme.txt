@@ -1,1 +1,1 @@
-Files for dashboards sored here
+Files for dashboards stored here
