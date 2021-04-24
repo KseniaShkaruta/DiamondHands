@@ -1,5 +1,5 @@
 #all data
-dashboards/data/*
+dashboards/data/*.csv
 
 
 .DS_Store
