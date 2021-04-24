@@ -1,0 +1,5 @@
+#all data
+dashboards/data/*
+
+
+.DS_Store
