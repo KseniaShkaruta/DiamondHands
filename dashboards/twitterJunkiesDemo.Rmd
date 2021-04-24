@@ -23,6 +23,13 @@ library(data.table)
 TICKERS = c('AMZN','BB','NAKD','GME','KOSS','AMC','^GSPC')
 HISTORICAL_PERIODS = c(3,6,12)
 
+#download file if it doens't exist
+if(!file.exists('/srv/shiny-server/apps/data/posts_with_scores_and_ticker.csv')){
+  fp = "https://dva-sp2021-team38.s3.amazonaws.com/public/posts_with_scores_and_ticker.csv"
+  download.file(fp,destfile="/srv/shiny-server/apps/data/posts_with_scores_and_ticker.csv",method='wget')
+}
+
+
 # sentiment/reddit data
 st_data <- read_csv("/srv/shiny-server/apps/data/posts_with_scores_and_ticker.csv", 
               col_types = cols(timestamp = col_datetime(format = "%Y-%m-%d, %H:%M:%S"))) %>%
