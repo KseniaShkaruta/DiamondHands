@@ -58,9 +58,9 @@ Inputs {.sidebar}
   selectInput("ticker_selection", label = h4("Select Stock Ticker"), 
     choices = TICKERS, 
     selected = "GME")
-  selectInput("months_sel", label = h4("How many months of data?"), 
-      choices = HISTORICAL_PERIODS, 
-      selected = 12)
+#  selectInput("months_sel", label = h4("How many months of data?"), 
+#      choices = HISTORICAL_PERIODS, 
+#      selected = 12)
 ```
 
 
