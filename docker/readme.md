@@ -1,9 +1,3 @@
-# TODO
-* make a directory that will have R code/dashboards for visualization
-    - this can be mounted to the container so our dashboard code will be in version control
-* create some helloworld dashboard examples
-* python3 comes installed from teh OS - maybe install miniconda incase we need more flexibility/package management?
-* once the image is more complete, publish it to dockerhub so users can install from there instead of running locally
 
 # Overview
 
@@ -20,8 +14,6 @@ This builds the image from the dockerfile. Run this from the directory where the
 * `docker build -t name-for-your-image .`
 ** You may need to authenticate if you get a rate limit error - https://www.docker.com/increase-rate-limits
 
-## Install a published image
-* **TODO**
 
 # Running
 Then you can run the image
@@ -35,8 +27,8 @@ name-for-your-image
 ```
 * the output will give you a docker containerid. Or use `docker ps` to see running contianers
     - you can go to the shell of the running container by running `docker exec -it <<<CONATINERID>>> bash`
-* the ports can be changed, 3333 will have the shiny server - http://localhost:4444/
-* 4444 will have the rstudio server (IDE)
+* The ports can be changed, but in the command above 3333 will have the shiny server - http://localhost:3333/
+    - 4444 will have the rstudio server (IDE)
 
 
 # Using the evironment
