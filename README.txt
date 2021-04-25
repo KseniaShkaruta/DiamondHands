@@ -64,11 +64,16 @@ docker run -d \
 #### RUNNING A DEMO ####
 ########################
 * If steps 2 and 3 were done above, go to http://localhost:3333/apps/diamondHandsDemo.Rmd in your browser
-* To access Rstudio server for developing, go to  http://localhost:4444 and login with username: rstudio, password: mypwd
 
+***DASHBOARD LOAD TIME***
+The very first time you load the dashboard, it will see a needed data file is not present in "dashboards/data" and have R download the file there. This gives you a longer load time.
+It may be faster to download the file yourself from https://dva-sp2021-team38.s3.amazonaws.com/public/posts_with_scores_and_ticker.csv and place it in that "dashboards/data" folder
+
+* To access Rstudio server for developing, go to  http://localhost:4444 and login with username: rstudio, password: mypwd
 
 
 
 ########################
 ###### DEMO VIDEO ######
 ########################
+https://youtu.be/g93MJ0wRnv0
