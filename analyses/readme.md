@@ -1,5 +1,5 @@
 # Overview
-The analysis directory contains the python scripts and jupyter notebooks which we've used for the data wrangling and analysis activities described in our report. The approximate "order" of the activities were:
+The analysis directory contains the python scripts and Jupyter notebooks which we've used for the data wrangling and analysis activities described in our report. The approximate "order" of the activities were:
 
 # Data
 Data is available in S3
@@ -19,5 +19,5 @@ https://dva-sp2021-team38.s3.amazonaws.com/public/posts_with_scores_and_ticker.c
 * wsb_ticker_tagging.ipynb
     - This notebook tags the Reddit data with what stocks are mentioned in the text.
 * cross_correlation_analysis.ipynb
-    - This notebook explores the data to find any correlational and causational relationships between Reddit sentiment and sock data. First, data is prepared for the analysis and calculations . Next data is visalized in graphs to spot any obvious patterns. Next, correlation metrics are created for different data series combinations. Finally, Spearman and cross-correlations are calcualted
+    - This notebook explores the data to find any correlation and causal relationships between Reddit sentiment and sock data. First, data is prepared for the analysis and calculations . Next data is visualized in graphs to spot any obvious patterns. Next, correlation metrics are created for different data series combinations. Finally, Spearman and cross-correlations are calculated
 
