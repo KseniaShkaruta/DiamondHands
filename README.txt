@@ -1,4 +1,4 @@
-CSE 6262 Data Visualization and Analytics, Spring 2021, Team 39 - DiamondHands
+CSE 6262 Data Visualization and Analytics, Spring 2021, Team 38 - DiamondHands
 
 ########################
 ##### DESCRIPTION ######
